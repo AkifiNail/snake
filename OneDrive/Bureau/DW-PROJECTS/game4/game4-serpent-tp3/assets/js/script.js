@@ -22,42 +22,6 @@ let tab = [
   { di: -1, dj: 0 },
 ];
 
-class Anneau {
-  constructor(i, j, couleur) {
-    this.i = i;
-    this.j = j;
-    this.couleur = couleur;
-  }
-
-  draw() {
-    ctx.fillStyle = this.couleur;
-    let x = this.i * 20;
-    let y = this.j * 20;
-    ctx.fillRect(x, y, 20, 20);
-  }
-
-  move(d) {
-    this.i += tab[d].di;
-    this.j += tab[d].dj;
-
-    if (this.i < 0) {
-      this.i = 20;
-    } else if (this.i >= 20) {
-      this.i = 0;
-    }
-    if (this.j < 0) {
-      this.j = 20;
-    } else if (this.j >= 20) {
-      this.j = 0;
-    }
-  }
-
-  copie(a) {
-    this.i = a.i;
-    this.j = a.j;
-  }
-}
-
 class Terrain {
   constructor(largeur, hauteur) {
     this.largeur = largeur;
@@ -81,7 +45,7 @@ class Terrain {
       this.sol[i][0] = 0;
     }
 
-    let rocher = 10;
+    let rocher = 40;
     let rocherValue = 2;
 
     for (let k = 0; k < rocher; k++) {
@@ -110,9 +74,69 @@ class Terrain {
   read(i, j) {
     return this.sol[i][j];
   }
+
+  write(i, j, value) {
+    for (let i = 0; i < this.largeur; i++) {
+      for (let j = 0; j < this.hauteur; j++) {
+        this.sol[i][j] = value;
+      }
+    }
+  }
 }
 
 const terrain = new Terrain(20, 20);
+console.log(terrain.read(9, 3));
+
+class Anneau {
+  constructor(i, j, couleur) {
+    this.i = i;
+    this.j = j;
+    this.couleur = couleur;
+  }
+
+  draw() {
+    ctx.fillStyle = this.couleur;
+    let x = this.i * 20;
+    let y = this.j * 20;
+    ctx.fillRect(x, y, 20, 20);
+  }
+
+  move(d) {
+    this.i += tab[d].di;
+    this.j += tab[d].dj;
+
+    if (this.i < 0) {
+      this.i = terrain.largeur - 1;
+    } else if (this.i >= terrain.largeur) {
+      this.i = 0;
+    }
+    if (this.j < 0) {
+      this.j = terrain.hauteur - 1;
+    } else if (this.j >= terrain.hauteur) {
+      this.j = 0;
+    }
+  }
+
+  copie(a) {
+    this.i = a.i;
+    this.j = a.j;
+  }
+
+  read(direction) {
+    let nextI = this.i + tab[direction].di;
+    let nextJ = this.j + tab[direction].dj;
+    if (
+      nextI < 0 ||
+      nextI >= terrain.largeur ||
+      nextJ < 0 ||
+      nextJ >= terrain.hauteur
+    ) {
+      return undefined;
+    }
+    return terrain.read(nextI, nextJ);
+  }
+}
+
 class Serpent {
   constructor(longueur, i, j, direction) {
     this.longueur = longueur;
@@ -137,20 +161,39 @@ class Serpent {
       this.anneaux[n].copie(this.anneaux[n - 1]);
     }
     let head = this.anneaux[0];
-    head.move(this.direction);
+    let nextCellValue = head.read(this.direction);
+    console.log(nextCellValue);
 
     let randomNumber = getRandomInt(10);
     let newDirection = getRandomInt(4);
 
     if (this === serpent1) {
+      head.move(this.direction);
       return;
     }
 
-    if (randomNumber < 2) {
+    if (
+      nextCellValue === 0 ||
+      nextCellValue === 1 ||
+      nextCellValue === undefined
+    ) {
+      head.move(this.direction);
+    }
+
+    if (randomNumber < 2 && nextCellValue !== 2) {
       while (newDirection === oppositeDirections[this.direction]) {
         newDirection = getRandomInt(4);
       }
       this.direction = newDirection;
+    }
+
+    if (nextCellValue === 0) {
+      console.log("mur");
+    } else if (nextCellValue === 1) {
+      console.log("air");
+    } else if (nextCellValue === 2) {
+      head.move((this.direction + 1) % 4);
+      console.log("roche");
     }
   }
 
@@ -214,5 +257,4 @@ function toggleFullScreen() {
     document.exitFullscreen();
   }
 }
-
 setInterval(drawSnake, 100);
