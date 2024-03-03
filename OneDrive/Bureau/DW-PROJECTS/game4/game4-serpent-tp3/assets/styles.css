@@ -1,16 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
 .canva{
-    border: 2px solid black;
+    border: 2px solid rgb(255, 255, 255);
+    /* font-family: "VT323", monospace; */
 }
 
 
 body{
-    background-color: #f2f2f2;
+    background: linear-gradient(to bottom, #050505, #000022);
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
     height: 100vh;
+    font-family: "Press Start 2P", system-ui;
+    position: relative;
+}
+
+h1{
+    color: #fff;
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(to right, #ff69b4, #add8e6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+p{
+    color: #fff;
+}
+
+section{
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
+    margin-top: 3rem;
+}
+
+
+.gameover{
+    position: absolute;
+    top: 42%;
+    left: 42%;
+    display: flex;
+    flex-direction: column !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.gameover h2{
+    color: #fff;
+    font-size: 2rem;
+    background: linear-gradient(to right, #ffea4b, #b78300);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+.gameover button{
+    padding: .5rem 1rem;
+    border-radius: 10px;
+    border: 1px solid wheat;
+    background-color: #ffffff00;
+    color: #fff;
+    font-size: .6rem;
+    cursor: pointer;
+    transition: all 0.4 ease;
+    font-family: "Press Start 2P", system-ui;
+}
+
+.gameover button:hover{
+    background: linear-gradient(to right, #ffea4b, #b78300);
+    transition: all 0.3s ease;
+}
+
+.hidden{
+    display: none;
+}
+.compte{
+    position: absolute;
+    top : 37%;
+    left: 50%;
 }

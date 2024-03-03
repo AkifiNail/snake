@@ -8,6 +8,14 @@ function getRandomInt(max) {
 }
 
 let survivantMode = false;
+let gameInterval;
+let gameInterval2;
+let count;
+
+let gameOver = document.querySelector(".gameover");
+let restartButton = document.querySelector(".restart");
+
+let bestScore = 0;
 
 function getRandomColor() {
   const red = getRandomInt(256);
@@ -45,26 +53,31 @@ class Terrain {
       }
     }
 
-    //bordure
-    for (let j = 0; j < hauteur; j++) {
-      this.sol[0][j] = 0;
-      this.sol[largeur - 1][j] = 0;
+    this.reset();
+  }
+
+  reset() {
+    let rocher = survivantMode ? 10 : 0;
+    let rocherValue = 2;
+
+    for (let i = 0; i < this.largeur; i++) {
+      for (let j = 0; j < this.hauteur; j++) {
+        this.sol[i][j] = 1;
+      }
     }
-    for (let i = 0; i < largeur; i++) {
-      this.sol[i][hauteur - 1] = 0;
+
+    for (let j = 0; j < this.hauteur; j++) {
+      this.sol[0][j] = 0;
+      this.sol[this.largeur - 1][j] = 0;
+    }
+    for (let i = 0; i < this.largeur; i++) {
+      this.sol[i][this.hauteur - 1] = 0;
       this.sol[i][0] = 0;
     }
 
-    let rocher = 30;
-    let rocherValue = 2;
-
-    console.log(survivantMode);
-
-    console.log(rocher);
-
     for (let k = 0; k < rocher; k++) {
-      let i = getRandomInt2(1, largeur - 1);
-      let j = getRandomInt2(1, hauteur - 1);
+      let i = getRandomInt2(1, this.largeur - 1);
+      let j = getRandomInt2(1, this.hauteur - 1);
       this.sol[i][j] = rocherValue;
     }
   }
@@ -94,7 +107,13 @@ class Terrain {
   }
 
   write(i, j, value) {
-    this.sol[i][j] = value;
+    if (this.sol[i] !== undefined) {
+      this.sol[i][j] = value;
+    } else {
+      console.error(
+        "Tentative d'accéder à une position non définie dans le tableau sol."
+      );
+    }
   }
 }
 
@@ -118,28 +137,15 @@ class Anneau {
     this.i += tab[d].di;
     this.j += tab[d].dj;
 
-    if (this === serpent1) {
-      if (this.i < 0) {
-        console.log("perdu");
-      } else if (this.i >= terrain.largeur) {
-        console.log("perdu");
-      }
-      if (this.j < 0) {
-        console.log("perdu");
-      } else if (this.j >= terrain.hauteur) {
-        console.log("perdu");
-      }
-    } else {
-      if (this.i < 0) {
-        this.i = terrain.largeur - 1;
-      } else if (this.i >= terrain.largeur) {
-        this.i = 0;
-      }
-      if (this.j < 0) {
-        this.j = terrain.hauteur - 1;
-      } else if (this.j >= terrain.hauteur) {
-        this.j = 0;
-      }
+    if (this.i < 0) {
+      this.i = terrain.largeur - 1;
+    } else if (this.i >= terrain.largeur) {
+      this.i = 0;
+    }
+    if (this.j < 0) {
+      this.j = terrain.hauteur - 1;
+    } else if (this.j >= terrain.hauteur) {
+      this.j = 0;
     }
   }
 
@@ -217,7 +223,9 @@ class Serpent {
 
     terrain.write(head.i, head.j, serpentHeadValue);
     terrain.write(last.i, last.j, serpentEndValue);
-    terrain.write(food.i, food.j, foodValue);
+    if (!survivantMode) {
+      terrain.write(food.i, food.j, foodValue);
+    }
 
     if (nextCellValue === 3) {
       this.extend();
@@ -229,8 +237,14 @@ class Serpent {
       scoreContent.textContent = score;
     }
 
-    if (this === serpent1 && nextCellValue === 2) {
-      console.log("ok");
+    if (
+      (this === serpent1 && nextCellValue === 2) ||
+      (this === serpent1 && head.i == 0) ||
+      (this === serpent1 && head.i == terrain.largeur - 1) ||
+      (this === serpent1 && head.j == 0) ||
+      (this === serpent1 && head.j == terrain.hauteur - 1)
+    ) {
+      GameOver();
     }
 
     if (this === serpent1) {
@@ -285,17 +299,25 @@ class Food {
   }
 
   draw() {
+    console.log(survivantMode);
+    if (survivantMode) {
+      return;
+    }
     ctx.fillStyle = "blue";
     let x = this.i * 20;
     let y = this.j * 20;
     ctx.fillRect(x, y, 20, 20);
   }
   place() {
+    if (survivantMode) {
+      return;
+    }
+
     let validLocation = false;
     while (!validLocation) {
-      this.i = getRandomInt(terrain.largeur);
-      this.j = getRandomInt(terrain.hauteur);
-      if (terrain.read(this.i, this.j) === 1) {
+      this.i = getRandomInt(terrain.largeur - 1);
+      this.j = getRandomInt(terrain.hauteur - 1);
+      if (!survivantMode || terrain.read(this.i, this.j) === 1) {
         validLocation = true;
       }
     }
@@ -308,26 +330,29 @@ let serpent2 = new Serpent(7, 15, 5, 2);
 let serpent3 = new Serpent(9, 5, 15, 1);
 
 function drawSnake() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  terrain.draw(ctx);
-  serpent1.move();
-  serpent2.move();
-  serpent3.move();
-  serpent1.draw();
-  serpent2.draw();
-  serpent3.draw();
-  key();
+  if (gameOver.classList.contains("r")) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    terrain.draw(ctx);
+    serpent1.move();
+    serpent2.move();
+    serpent3.move();
+    serpent1.draw();
+    serpent2.draw();
+    serpent3.draw();
+    key();
+  }
 }
 
-let food = new Food(5, 5);
+let food;
 
 function drawSnake2() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  terrain.draw(ctx);
-  serpent1.move();
-  serpent1.draw();
-  food.draw();
-  key();
+  if (gameOver.classList.contains("r")) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    serpent1.move();
+    serpent1.draw();
+    food.draw();
+    key();
+  }
 }
 
 function key() {
@@ -349,6 +374,49 @@ function key() {
   });
 }
 
+function GameOver() {
+  clearInterval(gameInterval);
+  clearInterval(gameInterval2);
+  gameOver.classList.remove("hidden");
+  gameOver.classList.remove("r");
+
+  if (score > bestScore) {
+    bestScore = score;
+    document.querySelector(".bestscore").textContent = bestScore;
+  }
+}
+
+restartButton.addEventListener("click", function () {
+  gameOver.classList.add("hidden");
+  countdown(3, function () {
+    ResetGame();
+  });
+});
+
+function ResetGame() {
+  score = 0;
+  scoreContent.textContent = score;
+  terrain.reset();
+  serpent1 = new Serpent(5, 10, 10, 0);
+  serpent2 = new Serpent(7, 15, 5, 2);
+  serpent3 = new Serpent(9, 5, 15, 1);
+
+  if (gameInterval) {
+    clearInterval(gameInterval);
+  }
+  if (gameInterval2) {
+    clearInterval(gameInterval2);
+  }
+
+  if (!survivantMode) {
+    food = new Food(5, 5);
+    food.place();
+    gameInterval2 = setInterval(drawSnake2, 200000);
+  } else {
+    gameInterval = setInterval(drawSnake, 200000);
+  }
+}
+
 function toggleFullScreen() {
   if (!document.fullscreenElement) {
     canvas.requestFullscreen().catch((err) => {
@@ -359,16 +427,40 @@ function toggleFullScreen() {
   }
 }
 
+function countdown(seconds, callback) {
+  count = seconds;
+  compte.classList.remove("hidden");
+  gameOver.classList.add("hidden");
+  compte.textContent = count;
+
+  let countdownInterval = setInterval(function () {
+    count--;
+    compte.textContent = count;
+
+    if (count === 0) {
+      clearInterval(countdownInterval);
+      callback();
+      compte.classList.add("hidden");
+      gameOver.classList.add("r");
+    }
+  }, 1000);
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   let classique = document.querySelector(".classique");
   let survivant = document.querySelector(".survivant");
+  compte = document.querySelector(".compte");
 
   survivant.addEventListener("click", function () {
+    survivantMode = true;
+    terrain.reset();
     setInterval(drawSnake, 100);
   });
 
   classique.addEventListener("click", function () {
-    // survivantMode = true;
+    survivantMode = false;
+    terrain.reset();
     setInterval(drawSnake2, 100);
+    food = new Food(5, 5);
   });
 });
