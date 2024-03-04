@@ -86,9 +86,9 @@ class Terrain {
     for (let i = 0; i < this.largeur; i++) {
       for (let j = 0; j < this.hauteur; j++) {
         if (this.sol[i][j] === 0) {
-          ctx.fillStyle = "black";
-        } else if (this.sol[i][j] === 1) {
           ctx.fillStyle = "white";
+        } else if (this.sol[i][j] === 1) {
+          ctx.fillStyle = "rgba(0, 0, 255, 0)";
         } else if (this.sol[i][j] === 2) {
           ctx.fillStyle = "grey";
         }
@@ -176,9 +176,9 @@ class Serpent {
     this.j = j;
     this.direction = direction;
     this.anneaux = [];
-    this.anneaux.push(new Anneau(i, j, "red"));
+    this.anneaux.push(new Anneau(i, j, "purple"));
     for (let k = 1; k < this.longueur; k++) {
-      this.anneaux.push(new Anneau(i - k, j, "green"));
+      this.anneaux.push(new Anneau(i - k, j, "white"));
     }
   }
 
@@ -236,13 +236,13 @@ class Serpent {
       score++;
       scoreContent.textContent = score;
     }
-
     if (
       (this === serpent1 && nextCellValue === 2) ||
-      (this === serpent1 && head.i == 0) ||
-      (this === serpent1 && head.i == terrain.largeur - 1) ||
-      (this === serpent1 && head.j == 0) ||
-      (this === serpent1 && head.j == terrain.hauteur - 1)
+      (this === serpent1 &&
+        (head.i < 0 ||
+          head.i > terrain.largeur ||
+          head.j < 0 ||
+          head.j > terrain.hauteur))
     ) {
       GameOver();
     }
@@ -285,7 +285,7 @@ class Serpent {
 
   extend() {
     let last = this.anneaux[this.anneaux.length - 1];
-    this.anneaux.push(new Anneau(last.i, last.j, "yellow"));
+    this.anneaux.push(new Anneau(last.i, last.j, "white"));
     this.longueur++;
   }
 }

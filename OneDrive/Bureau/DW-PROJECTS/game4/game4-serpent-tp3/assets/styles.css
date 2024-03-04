@@ -35,7 +35,6 @@ section{
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 3rem;
 }
 
 
@@ -80,6 +79,56 @@ section{
 }
 .compte{
     position: absolute;
-    top : 37%;
+    top : 47%;
     left: 50%;
 }
+
+main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.btn{
+    margin-top: 3rem;
+}
+
+
+.btn button{
+    padding: .5rem 1rem;
+        border-radius: 10px;
+        border: 1px solid wheat;
+        background-color: #ffffff00;
+        color: #fff;
+        font-size: .6rem;
+        cursor: pointer;
+        transition: all 0.4 ease;
+        font-family: "Press Start 2P", system-ui;
+}
+
+.btn button:hover {
+    background: linear-gradient(to right, #ffea4b, #b78300);
+    transition: all 0.3s ease;
+}
+
+
+img{
+    height: 30px;
+    width: 30px;
+    margin-left: 400px;
+    transition: all 0.3s ease;
+}
+
+
+img:hover{
+    transform: scale(1.2);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.b{
+    margin-top: -0.5rem;
+}
+

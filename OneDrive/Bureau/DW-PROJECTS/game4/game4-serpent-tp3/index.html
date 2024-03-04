@@ -4,30 +4,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Snake</title>
+    <link rel="icon" href="./images/sankelogo.png?v=2" type="image/x-icon">
     <link rel="stylesheet" href="./assets/styles.css">
-
-
 </head>
 
 <body>
+
     <p class="hidden compte">3</p>
     <div class="gameover hidden r">
         <h2>Game Over</h2>
         <button class="restart">Restart</button>
     </div>
+    <main>
+        <section>
+            <h1>Game 4 serpent</h1>
 
-    <section>
-        <h1>Game 4 serpent</h1>
-        <p>Score : <span class="scorecontent">0</span></p>
-        <p>Best Score : <span class="bestscore">0</span></p>
-        <canvas class="canva" id="terrain" width="400" height="400"></canvas>
-    </section>
+            <p>Score : <span class="scorecontent">0</span></p>
+            <img src="./images/76716pp.png" class="settings">
+            <p class="b">Best Score : <span class="bestscore">0</span></p>
+
+            <canvas class="canva" id="terrain" width="400" height="400"></canvas>
+        </section>
+
+        <div class="btn">
+            <button class="screen" onclick="toggleFullScreen()">Mettre en plein écran</button>
+            <button class="classique">Classique mode</button>
+            <button class="survivant">Survivant mode</button>
+        </div>
+    </main>
 
     <script src="./assets/js/script.js"></script>
-    <button class="screen" onclick="toggleFullScreen()">Mettre en plein écran</button>
-    <button class="classique">Classique mode</button>
-    <button class="survivant">Survivant mode</button>
 
 </body>
 
