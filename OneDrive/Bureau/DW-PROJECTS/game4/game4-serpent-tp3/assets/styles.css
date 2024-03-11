@@ -81,6 +81,11 @@ section{
     position: absolute;
     top : 47%;
     left: 50%;
+    text-shadow:
+            -1px -1px 0 #000,
+            1px -1px 0 #000,
+            -1px 1px 0 #000,
+            1px 1px 0 #000;
 }
 
 main{
@@ -117,7 +122,6 @@ main{
 img{
     height: 30px;
     width: 30px;
-    margin-left: 400px;
     transition: all 0.3s ease;
 }
 
@@ -132,3 +136,130 @@ img:hover{
     margin-top: -0.5rem;
 }
 
+.f{
+    display: flex;
+    width: 10%;
+    margin-left: 400px;
+    gap: 20px;
+}
+
+
+.settingsmenu{
+    border: 2px solid white;
+    background-color: #000022;
+    position: absolute;
+    padding: 2rem;
+}
+
+
+.settingsmenu h2{
+    color: #ffff;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.difficulte{
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 2rem;
+    gap: 20px;
+}
+
+.difficulte button{
+    padding: .5rem 1rem;
+    border-radius: 1px;
+    border: 1px solid rgb(255, 255, 255);
+    background-color: #ffffff00;
+    color: #fff;
+    font-size: .6rem;
+    cursor: pointer;
+    transition: all 0.4 ease;
+    font-family: "Press Start 2P", system-ui;
+}
+
+
+.easy:hover{
+    background-color: green !important;
+}
+
+.medium:hover{
+    background-color: rgb(149, 149, 0) !important;
+}
+
+.hard:hover{
+    background-color: rgb(163, 0, 0) !important;
+}
+
+.activeeasy{
+    background-color: green !important;
+}
+
+.activemoyen{
+    background-color: rgb(149, 149, 0) !important;
+}
+
+.activehard{
+    background-color: rgb(163, 0, 0) !important;
+}
+
+.end{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 3rem;
+}
+
+.end button{
+    padding: .5rem 1rem;
+    border-radius: 1px;
+    border: 1px solid rgb(255, 255, 255);
+    background-color: #ffffff00;
+    color: #fff;
+    font-size: .6rem;
+    cursor: pointer;
+    transition: all 0.4 ease;
+    font-family: "Press Start 2P", system-ui;
+}
+
+
+.closesettings:hover{
+    background-color: rgb(163, 0, 0) !important;
+}
+
+.save:hover{
+    background-color: green !important;
+}
+
+.rocherValue{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 2rem;
+}
+
+.rocherValue input{
+    padding: .5rem 1rem;
+    border-radius: 1px;
+    border: 1px solid rgb(255, 255, 255);
+    background-color: #ffffff00;
+    color: #fff;
+    font-size: .6rem;
+    cursor: pointer;
+    transition: all 0.4 ease;
+    font-family: "Press Start 2P", system-ui;
+    width: 75%;
+
+}
+
+label{
+    color: #fff;
+    font-size: .7rem;
+}
+
+.speedValue{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 2rem;
+}

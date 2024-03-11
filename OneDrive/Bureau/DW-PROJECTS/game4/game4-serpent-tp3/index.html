@@ -21,8 +21,37 @@
             <h1>Game 4 serpent</h1>
 
             <p>Score : <span class="scorecontent">0</span></p>
-            <img src="./images/76716pp.png" class="settings">
+            <div class="f">
+                <img src="./images/76716pp.png" class="settings">
+                <img src="./images/sonsouvert.png" class="sound">
+                <img src="./images/fermer.png" class="close hidden">
+            </div>
             <p class="b">Best Score : <span class="bestscore">0</span></p>
+
+            <div class="settingsmenu hidden">
+                <h2>Settings</h2>
+                <div class="settingscontent">
+                    <p>Difficulté</p>
+                    <div class="difficulte">
+                        <button class="easy">Facile</button>
+                        <button class="medium">Moyen</button>
+                        <button class="hard">Difficile</button>
+                    </div>
+                    <p>Personnalisation</p>
+                    <div class="rocherValue">
+                        <label>Nombre de rocher (max : 40)</label>
+                        <input type="number" class="input" placeholder="Rocher" value="10" min="1" max="40">
+                    </div>
+                    <div class="speedValue">
+                        <label>Vitesse</label>
+                        <input type="range" class="speed" min="1" max="3" value="1">
+                    </div>
+                    <div class="end">
+                        <button class="closesettings">Close</button>
+                        <button class="save">Save</button>
+                    </div>
+                </div>
+            </div>
 
             <canvas class="canva" id="terrain" width="400" height="400"></canvas>
         </section>

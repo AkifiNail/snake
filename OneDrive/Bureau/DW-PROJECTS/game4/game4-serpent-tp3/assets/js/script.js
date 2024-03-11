@@ -86,7 +86,7 @@ class Terrain {
     for (let i = 0; i < this.largeur; i++) {
       for (let j = 0; j < this.hauteur; j++) {
         if (this.sol[i][j] === 0) {
-          ctx.fillStyle = "white";
+          ctx.fillStyle = "rgba(0, 0, 255, 0)";
         } else if (this.sol[i][j] === 1) {
           ctx.fillStyle = "rgba(0, 0, 255, 0)";
         } else if (this.sol[i][j] === 2) {
@@ -133,19 +133,43 @@ class Anneau {
     ctx.fillRect(x, y, 20, 20);
   }
 
-  move(d) {
+  move(d, snakeInstance) {
     this.i += tab[d].di;
     this.j += tab[d].dj;
 
-    if (this.i < 0) {
-      this.i = terrain.largeur - 1;
-    } else if (this.i >= terrain.largeur) {
-      this.i = 0;
+    let nextCellValue = this.read(d);
+    let head;
+    if (
+      snakeInstance &&
+      snakeInstance.anneaux &&
+      snakeInstance.anneaux.length > 0
+    ) {
+      head = snakeInstance.anneaux[0];
+    } else {
+      return;
     }
-    if (this.j < 0) {
-      this.j = terrain.hauteur - 1;
-    } else if (this.j >= terrain.hauteur) {
-      this.j = 0;
+
+    if (snakeInstance === serpent1) {
+      if (
+        nextCellValue === 2 ||
+        head.i < 0 ||
+        head.i >= terrain.largeur ||
+        head.j < 0 ||
+        head.j >= terrain.hauteur
+      ) {
+        GameOver();
+      }
+    } else {
+      if (this.i < 0) {
+        this.i = terrain.largeur - 1;
+      } else if (this.i >= terrain.largeur) {
+        this.i = 0;
+      }
+      if (this.j < 0) {
+        this.j = terrain.hauteur - 1;
+      } else if (this.j >= terrain.hauteur) {
+        this.j = 0;
+      }
     }
   }
 
@@ -170,15 +194,16 @@ class Anneau {
 }
 
 class Serpent {
-  constructor(longueur, i, j, direction) {
+  constructor(longueur, i, j, direction, colorHead, colorBody) {
     this.longueur = longueur;
     this.i = i;
     this.j = j;
     this.direction = direction;
     this.anneaux = [];
-    this.anneaux.push(new Anneau(i, j, "purple"));
+    // ici je veux appliqué cette boucle uniquement pour le serpent 1 et pour tout les autres serpent la meme boucle mais avec des couleurs différentes
+    this.anneaux.push(new Anneau(i, j, colorHead));
     for (let k = 1; k < this.longueur; k++) {
-      this.anneaux.push(new Anneau(i - k, j, "white"));
+      this.anneaux.push(new Anneau(i - k, j, colorBody));
     }
   }
 
@@ -235,20 +260,11 @@ class Serpent {
       terrain.write(food.i, food.j, 3);
       score++;
       scoreContent.textContent = score;
-    }
-    if (
-      (this === serpent1 && nextCellValue === 2) ||
-      (this === serpent1 &&
-        (head.i < 0 ||
-          head.i > terrain.largeur ||
-          head.j < 0 ||
-          head.j > terrain.hauteur))
-    ) {
-      GameOver();
+      foodSound();
     }
 
     if (this === serpent1) {
-      head.move(this.direction);
+      head.move(this.direction, this);
       return;
     }
 
@@ -257,7 +273,7 @@ class Serpent {
       nextCellValue === 0 ||
       nextCellValue === undefined
     ) {
-      head.move(this.direction);
+      head.move(this.direction, this);
     }
 
     if (randomNumber < 2 && nextCellValue !== 2) {
@@ -292,6 +308,17 @@ class Serpent {
 
 let score = 0;
 
+let scoreInterval;
+
+function timer() {
+  if (survivantMode) {
+    scoreInterval = setInterval(function () {
+      score++;
+      scoreContent.textContent = score;
+    }, 1000);
+  }
+}
+
 class Food {
   constructor(i, j) {
     this.i = i;
@@ -299,7 +326,6 @@ class Food {
   }
 
   draw() {
-    console.log(survivantMode);
     if (survivantMode) {
       return;
     }
@@ -325,9 +351,9 @@ class Food {
 }
 
 // Création de plusieurs serpents
-let serpent1 = new Serpent(5, 10, 10, 0);
-let serpent2 = new Serpent(7, 15, 5, 2);
-let serpent3 = new Serpent(9, 5, 15, 1);
+let serpent1 = new Serpent(5, 10, 10, 0, "purple", "white");
+let serpent2 = new Serpent(7, 15, 5, 2, "red", "cyan");
+let serpent3 = new Serpent(9, 5, 15, 1, "red", "cyan");
 
 function drawSnake() {
   if (gameOver.classList.contains("r")) {
@@ -375,8 +401,14 @@ function key() {
 }
 
 function GameOver() {
+  gameOverSound();
   clearInterval(gameInterval);
   clearInterval(gameInterval2);
+
+  if (survivantMode && scoreInterval) {
+    clearInterval(scoreInterval);
+  }
+
   gameOver.classList.remove("hidden");
   gameOver.classList.remove("r");
 
@@ -390,6 +422,7 @@ restartButton.addEventListener("click", function () {
   gameOver.classList.add("hidden");
   countdown(3, function () {
     ResetGame();
+    buttonSound();
   });
 });
 
@@ -397,9 +430,9 @@ function ResetGame() {
   score = 0;
   scoreContent.textContent = score;
   terrain.reset();
-  serpent1 = new Serpent(5, 10, 10, 0);
-  serpent2 = new Serpent(7, 15, 5, 2);
-  serpent3 = new Serpent(9, 5, 15, 1);
+  serpent1 = new Serpent(5, 10, 10, 0, "purple", "white");
+  serpent2 = new Serpent(7, 15, 5, 2, "red", "cyan");
+  serpent3 = new Serpent(9, 5, 15, 1, "red", "cyan");
 
   if (gameInterval) {
     clearInterval(gameInterval);
@@ -414,6 +447,7 @@ function ResetGame() {
     gameInterval2 = setInterval(drawSnake2, 200000);
   } else {
     gameInterval = setInterval(drawSnake, 200000);
+    timer();
   }
 }
 
@@ -446,6 +480,9 @@ function countdown(seconds, callback) {
   }, 1000);
 }
 
+let close = document.querySelector(".close");
+let sound = document.querySelector(".sound");
+
 document.addEventListener("DOMContentLoaded", function () {
   let classique = document.querySelector(".classique");
   let survivant = document.querySelector(".survivant");
@@ -454,6 +491,8 @@ document.addEventListener("DOMContentLoaded", function () {
   survivant.addEventListener("click", function () {
     survivantMode = true;
     terrain.reset();
+    timer();
+    buttonSound();
     setInterval(drawSnake, 100);
   });
 
@@ -462,5 +501,108 @@ document.addEventListener("DOMContentLoaded", function () {
     terrain.reset();
     setInterval(drawSnake2, 100);
     food = new Food(5, 5);
+    buttonSound();
+    ResetGame();
   });
+});
+
+document.addEventListener("keydown", function (e) {
+  if (e.key === "f") {
+    toggleFullScreen();
+  }
+});
+
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") {
+    document.exitFullscreen();
+  }
+});
+
+sound.addEventListener("click", function () {
+  if (close.classList.contains("hidden")) {
+    close.classList.remove("hidden");
+    sound.classList.add("hidden");
+  }
+});
+
+close.addEventListener("click", function () {
+  if (sound.classList.contains("hidden")) {
+    sound.classList.remove("hidden");
+    close.classList.add("hidden");
+    buttonSound();
+  }
+});
+
+function gameOverSound() {
+  if (sound.classList.contains("hidden")) {
+    return;
+  } else {
+    let GameOveraudio = new Audio("./mp3/gameover.mp3");
+    GameOveraudio.play();
+  }
+}
+
+function buttonSound() {
+  if (sound.classList.contains("hidden")) {
+    return;
+  } else {
+    let buttonSound = new Audio("./mp3/button.mp3");
+    buttonSound.play();
+  }
+}
+
+function foodSound() {
+  if (sound.classList.contains("hidden")) {
+    return;
+  } else {
+    let foodSound = new Audio("./mp3/food.mp3");
+    foodSound.play();
+  }
+}
+
+let settingsButton = document.querySelector(".settings");
+let settingsMenu = document.querySelector(".settingsmenu");
+let easyMode = document.querySelector(".easy");
+let hardMode = document.querySelector(".hard");
+let mediumMode = document.querySelector(".medium");
+let closeSeetings = document.querySelector(".closesettings");
+
+closeSeetings.addEventListener("click", function () {
+  settingsMenu.classList.add("hidden");
+  buttonSound();
+});
+
+settingsButton.addEventListener("click", function () {
+  settingsMenu.classList.remove("hidden");
+  buttonSound();
+});
+
+easyMode.addEventListener("click", function () {
+  easyMode.classList.add("activeeasy");
+  if (mediumMode.classList.contains("activemoyen")) {
+    mediumMode.classList.remove("activemoyen");
+  } else if (hardMode.classList.contains("activehard")) {
+    hardMode.classList.remove("activehard");
+  }
+  buttonSound();
+});
+
+mediumMode.addEventListener("click", function () {
+  mediumMode.classList.add("activemoyen");
+  if (easyMode.classList.contains("activeeasy")) {
+    easyMode.classList.remove("activeeasy");
+  } else if (hardMode.classList.contains("activehard")) {
+    hardMode.classList.remove("activehard");
+  }
+  buttonSound();
+});
+
+hardMode.addEventListener("click", function () {
+  hardMode.classList.add("activehard");
+  if (easyMode.classList.contains("activeeasy")) {
+    easyMode.classList.remove("activeeasy");
+  } else if (mediumMode.classList.contains("activemoyen")) {
+    mediumMode.classList.remove("activemoyen");
+  }
+  buttonSound();
 });
