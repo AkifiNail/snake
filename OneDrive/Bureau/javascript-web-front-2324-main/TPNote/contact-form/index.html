@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Style, Bootstrap CSS, Fonts -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,700,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <title>TP Noté MMI - JavaScript - Formulaire de contact</title>
+</head>
+
+<body>
+
+  <div class="content">
+
+    <div class="container">
+
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+
+          <div class="row align-items-center">
+            <div class="col-lg-12 mb-5 mb-lg-0">
+
+              <h2 class="mb-5">Formulaire de<br>contact.</h2>
+              <!-- Formulaire de contact -->
+              <form id="contactForm">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="firstName" placeholder="Prénom">
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" id="lastName" placeholder="Nom">
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" id="email" placeholder="Email">
+                </div>
+                <div class="form-group">
+                  <textarea class="form-control" id="message" rows="4" placeholder="Message"></textarea>
+                </div>
+                <button id="submit" type="button" class="btn btn-primary">Envoyer le message</button>
+
+              </form>
+
+            </div>
+            <div class="col-lg-12 ml-auto mt-3">
+              <h2 class="mb-5">Liste des messages :</h2>
+              <table id="messages" class="full-width">
+                <!-- Messages seront affichés ici -->
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+</body>
+
+</html>
