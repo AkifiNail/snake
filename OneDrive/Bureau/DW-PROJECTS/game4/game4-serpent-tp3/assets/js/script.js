@@ -11,9 +11,14 @@ let survivantMode = false;
 let gameInterval;
 let gameInterval2;
 let count;
+let classique;
+let survivant;
+let rockValue = document.getElementById("rock");
 
 let gameOver = document.querySelector(".gameover");
 let restartButton = document.querySelector(".restart");
+let speed = document.querySelector(".speed");
+let speedValue = document.querySelector(".speed").value;
 
 let bestScore = 0;
 
@@ -57,7 +62,8 @@ class Terrain {
   }
 
   reset() {
-    let rocher = survivantMode ? 10 : 0;
+    let numberRock = document.getElementById("rock").value;
+    let rocher = survivantMode ? numberRock : 0;
     let rocherValue = 2;
 
     for (let i = 0; i < this.largeur; i++) {
@@ -194,16 +200,15 @@ class Anneau {
 }
 
 class Serpent {
-  constructor(longueur, i, j, direction, colorHead, colorBody) {
+  constructor(longueur, i, j, direction, headColor, bodyColor) {
     this.longueur = longueur;
     this.i = i;
     this.j = j;
     this.direction = direction;
     this.anneaux = [];
-    // ici je veux appliqué cette boucle uniquement pour le serpent 1 et pour tout les autres serpent la meme boucle mais avec des couleurs différentes
-    this.anneaux.push(new Anneau(i, j, colorHead));
+    this.anneaux.push(new Anneau(i, j, headColor));
     for (let k = 1; k < this.longueur; k++) {
-      this.anneaux.push(new Anneau(i - k, j, colorBody));
+      this.anneaux.push(new Anneau(i - k, j, bodyColor));
     }
   }
 
@@ -411,6 +416,9 @@ function GameOver() {
 
   gameOver.classList.remove("hidden");
   gameOver.classList.remove("r");
+  modeChanging = false;
+  // classique.disabled = false;
+  // survivant.disabled = false;
 
   if (score > bestScore) {
     bestScore = score;
@@ -486,23 +494,36 @@ let sound = document.querySelector(".sound");
 document.addEventListener("DOMContentLoaded", function () {
   let classique = document.querySelector(".classique");
   let survivant = document.querySelector(".survivant");
+  let modeChanging = false;
   compte = document.querySelector(".compte");
 
   survivant.addEventListener("click", function () {
-    survivantMode = true;
-    terrain.reset();
-    timer();
-    buttonSound();
-    setInterval(drawSnake, 100);
+    if (!modeChanging) {
+      survivantMode = true;
+      terrain.reset();
+      timer();
+      buttonSound();
+      setInterval(drawSnake, 100 / speedValue);
+      modeChanging = true;
+      // survivant.disabled = true;
+    } else {
+      return;
+    }
   });
 
   classique.addEventListener("click", function () {
-    survivantMode = false;
-    terrain.reset();
-    setInterval(drawSnake2, 100);
-    food = new Food(5, 5);
-    buttonSound();
-    ResetGame();
+    if (!modeChanging) {
+      survivantMode = false;
+      terrain.reset();
+      setInterval(drawSnake2, 100 / speedValue);
+      food = new Food(5, 5);
+      buttonSound();
+      ResetGame();
+      modeChanging = true;
+      // classique.disabled = true;
+    } else {
+      return;
+    }
   });
 });
 
@@ -572,6 +593,11 @@ closeSeetings.addEventListener("click", function () {
   buttonSound();
 });
 
+speed.addEventListener("change", function () {
+  speedValue = speed.value;
+  console.log(speedValue);
+});
+
 settingsButton.addEventListener("click", function () {
   settingsMenu.classList.remove("hidden");
   buttonSound();
@@ -579,6 +605,8 @@ settingsButton.addEventListener("click", function () {
 
 easyMode.addEventListener("click", function () {
   easyMode.classList.add("activeeasy");
+  rockValue.textContent = 10;
+  rockValue.value = 10;
   if (mediumMode.classList.contains("activemoyen")) {
     mediumMode.classList.remove("activemoyen");
   } else if (hardMode.classList.contains("activehard")) {
@@ -589,6 +617,8 @@ easyMode.addEventListener("click", function () {
 
 mediumMode.addEventListener("click", function () {
   mediumMode.classList.add("activemoyen");
+  rockValue.textContent = 15;
+  rockValue.value = 15;
   if (easyMode.classList.contains("activeeasy")) {
     easyMode.classList.remove("activeeasy");
   } else if (hardMode.classList.contains("activehard")) {
@@ -599,6 +629,8 @@ mediumMode.addEventListener("click", function () {
 
 hardMode.addEventListener("click", function () {
   hardMode.classList.add("activehard");
+  rockValue.textContent = 30;
+  rockValue.value = 30;
   if (easyMode.classList.contains("activeeasy")) {
     easyMode.classList.remove("activeeasy");
   } else if (mediumMode.classList.contains("activemoyen")) {
@@ -606,3 +638,21 @@ hardMode.addEventListener("click", function () {
   }
   buttonSound();
 });
+
+/* j'avais essayé les images mais y a eu des problemes lors des virages */
+
+// let imageHead = new Image();
+// imageHead.src = "./images/head.png";
+
+// let imageBody = new Image();
+// imageBody.src = "./images/body.png";
+
+// imageHead.onload = function () {
+//   console.log("Image chargée");
+// };
+
+// imageBody.onload = function () {
+//   console.log("Image chargée");
+// };
+
+// console.log(imageHead);

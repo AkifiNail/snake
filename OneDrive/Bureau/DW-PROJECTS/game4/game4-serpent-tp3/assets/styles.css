@@ -224,12 +224,9 @@ img:hover{
 
 
 .closesettings:hover{
-    background-color: rgb(163, 0, 0) !important;
-}
-
-.save:hover{
     background-color: green !important;
 }
+
 
 .rocherValue{
     display: flex;
